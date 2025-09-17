@@ -1,6 +1,6 @@
 
 
-\# trace do\_sys\_open
+# trace do\_sys\_open
 
 
 
@@ -14,57 +14,57 @@ type following instruction in the shell.
 
 T=/sys/kernel/debug/tracing
 
-echo function\_graph > $T/current\_tracer
+echo function_graph > $T/current_tracer
 
-echo do\_sys\_open > $T/set\_graph\_function
+echo do_sys_open > $T/set_graph_function
 
-echo "kallsyms\_\* > $T/set\_ftrace\_notrace
+echo "kallsyms_* > $T/set_ftrace_notrace
 
-echo 0 > $T/max\_graph\_depth
+echo 0 > $T/max_graph_depth
 
-echo 1 > $T/tracing\_on
+echo 1 > $T/tracing_on
 
 ls >/dev/null
 
-echo 0 > $T/tracing\_on
+echo 0 > $T/tracing_on
 
 sed -n '1,120p' $T/trace
 
 ```
 
-result in do\_sys\_open.png
+result in do_sys_open.png
 
 
 
-\## Use printk to show file name and path
+## Use printk to show file name and path
 
 edit /fs/open.c
 
 ```c
 
-static int do\_sys\_openat2(int dfd, const char \_\_user \*filename,
+static int do\_sys\_openat2(int dfd, const char __user *filename,
 
-&nbsp;                         struct open\_how \*how)
+                         struct open_how *how)
 
 {
 
-&nbsp;   if (current->pid == 1) {   
+   if (current->pid == 1) {   
 
-&nbsp;       char fname\[128] = {0};
+       char fname[128] = {0};
 
-&nbsp;       long copied = strncpy\_from\_user(fname,  filename, sizeof(fname)-1);
+       long copied = strncpy_from_user(fname,  filename, sizeof(fname)-1);
 
-&nbsp;   if (copied > 0)
+   if (copied > 0)
 
-&nbsp;       printk("\[day4-open] pid=%d flags=%lld path=%s\\n",
+       printk("[day4-open]pid=%d flags=%lld path=%s\n",
 
-&nbsp;               current->pid, how->flags, fname);
+               current->pid, how->flags, fname);
 
-&nbsp;   else
+   else
 
-&nbsp;       printk("\[day4-open] pid=%d flags=%lld path=<copy-failed>\\n",
+       printk("[day4-open] pid=%d flags=%lld path=<copy-failed>\n",
 
-&nbsp;               current->pid, how->flags);
+               current->pid, how->flags);
 
 }
 
@@ -74,7 +74,7 @@ rebuild image
 
 ```bash
 
-make -j\&(nproc) bzImage
+make -j&(nproc) bzImage
 
 ```
 
@@ -86,7 +86,8 @@ echo hello >/tmp/a
 
 ```
 
-result in show\_path.png
+result in show_path.png
+
 
 
 
